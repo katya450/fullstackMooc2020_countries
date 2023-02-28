@@ -16,13 +16,44 @@ function App() {
     setSearch(event.target.value);
   };
 
-  // TODO empty list when no filtered? instead of all the names. useState with empty array?
-
   const countryNames = fetchedCountries.map((c) => c.name?.common);
 
-  const filteredCountries = countryNames.filter((n) =>
-    n.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredCountries = () =>
+    countryNames.filter((n) => n.toLowerCase().includes(search.toLowerCase()));
+
+  const countriesToShow = search === "" ? [] : filteredCountries();
+
+  const countryInfo = (countryName) => {
+    const countryData = fetchedCountries.find(
+      (c) => c.name?.common === countryName
+    );
+
+    const countryFlag = Object.entries(countryData?.flags)[0][1];
+
+    return (
+      <div>
+        <h2>{countryName}</h2>
+        <div>Capital: {countryData?.capital[0]}</div>
+        <div>Population: {countryData?.population}</div>
+        <h3>Languages:</h3>
+        <ul className="language-list">
+          {Object.values(countryData?.languages).map((l) => (
+            <li>{l}</li>
+          ))}
+        </ul>
+        <img
+          src={countryFlag}
+          alt={`Flag of ${countryName}`}
+          className="flag"
+        />
+      </div>
+    );
+  };
+
+  const countries =
+    countriesToShow.length === 1
+      ? countryInfo(countriesToShow[0])
+      : countriesToShow.map((c) => <div>{c}</div>);
 
   return (
     <div className="App">
@@ -34,9 +65,11 @@ function App() {
       </header>
       <body>
         <div className="countries">
-          {filteredCountries.map((c) => (
-            <div>{c}</div>
-          ))}
+          {countriesToShow.length > 10 ? (
+            <div>Rajaa enemmän, liikaa tuloksia (yli 10)</div>
+          ) : (
+            countries
+          )}
         </div>
       </body>
     </div>
