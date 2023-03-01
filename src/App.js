@@ -5,7 +5,6 @@ import axios from "axios";
 const App = () => {
   const [fetchedCountries, setFetchedCountries] = useState([]);
   const [search, setSearch] = useState("");
-  const [countryToShow, setCountryToShow] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
 
   useEffect(() => {
@@ -44,7 +43,7 @@ const App = () => {
         <h3>Languages:</h3>
         <ul className="language-list">
           {Object.values(countryData?.languages).map((l) => (
-            <li>{l}</li>
+            <li key={l}>{l}</li>
           ))}
         </ul>
         <img
@@ -56,39 +55,30 @@ const App = () => {
     );
   };
 
-  useEffect(() => {
-    setCountryToShow(selectedCountry);
-  }, [selectedCountry]);
-
-  const countries =
-    countryList.length === 1
-      ? countryInfo(countryList[0])
-      : countryList.map((c) => (
-          <div key={c}>
-            {c} <button onClick={() => handleCountryClick(c)}>KLIK</button>
-          </div>
-        ));
+  const countries = countryList.map((c) => (
+    <div key={c}>
+      {c} <button onClick={() => handleCountryClick(c)}>Show info</button>
+    </div>
+  ));
 
   return (
     <div className="App">
       <header className="App-header">
         <div className="search">
-          <label for="countrysearch">Hae?</label>
+          <label htmlFor="countrysearch">Hae?</label>
           <input name="countrysearch" onChange={handleCountryFilter}></input>
         </div>
       </header>
-      <body>
+      <div>
         <div className="countries">
           {countryList.length > 10 ? (
             <div>Rajaa enemmän, liikaa tuloksia (yli 10)</div>
           ) : (
             countries
           )}
-          {countryList.length !== 1 && countryToShow !== "" && (
-            <div>{countryInfo(selectedCountry)}</div>
-          )}
+          {selectedCountry !== "" && <div>{countryInfo(selectedCountry)}</div>}
         </div>
-      </body>
+      </div>
     </div>
   );
 };
